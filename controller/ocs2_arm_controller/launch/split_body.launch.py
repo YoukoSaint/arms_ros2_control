@@ -46,8 +46,9 @@ def launch_setup(context, *args, **kwargs):
         ocs2_planning_param_file=ocs2_planning_param_file,
     )
 
-    enable_gripper = (
-        context.launch_configurations.get("enable_gripper", "true").lower() == "true"
+    enable_gripper = ocs2_common.gripper_enabled_for_type(
+        ctx.robot_type,
+        context.launch_configurations.get("enable_gripper", "true"),
     )
     hand_controllers, hand_spawners = ocs2_common.setup_hand_controllers(ctx, enable_gripper)
 

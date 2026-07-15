@@ -52,6 +52,13 @@ class Ocs2ControlContext:
     launch_configurations: dict = field(default_factory=dict)
 
 
+def gripper_enabled_for_type(robot_type: str, requested: str) -> bool:
+    """Keep gripper controllers out of every gripper-free robot launch."""
+    if robot_type.strip().lower() in ("none", "empty"):
+        return False
+    return requested.strip().lower() in ("true", "1", "yes")
+
+
 def build_ocs2_control_context(context) -> Ocs2ControlContext:
     """Load profile, ros2_control config, and launch mode from launch context."""
     configs = context.launch_configurations

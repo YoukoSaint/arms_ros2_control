@@ -45,13 +45,10 @@ def launch_setup(context, *args, **kwargs):
         ocs2_planning_param_file=ocs2_planning_param_file,
     )
 
-    gripper_type = context.launch_configurations.get("type", "")
-    if gripper_type in ("none", "empty"):
-        enable_gripper = False
-    else:
-        enable_gripper = (
-            context.launch_configurations.get("enable_gripper", "true").lower() == "true"
-        )
+    enable_gripper = ocs2_common.gripper_enabled_for_type(
+        ctx.robot_type,
+        context.launch_configurations.get("enable_gripper", "true"),
+    )
     hand_controllers, hand_spawners = ocs2_common.setup_hand_controllers(ctx, enable_gripper)
     hand_names = [c["name"] for c in hand_controllers] if enable_gripper else []
 
@@ -103,7 +100,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             DeclareLaunchArgument("robot", default_value="cr5"),
-            DeclareLaunchArgument("type", default_value=""),
+            DeclareLaunchArgument("type", default_value="none"),
             DeclareLaunchArgument("hardware", default_value="mock_components"),
             DeclareLaunchArgument("world", default_value="dart"),
             DeclareLaunchArgument("enable_arms_target_manager", default_value="true"),
